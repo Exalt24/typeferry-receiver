@@ -1,0 +1,7 @@
+__pycache__/
+*.log
+token.txt
+paired.txt
+last_phone.txt
+known_phones.txt
+started.txt
