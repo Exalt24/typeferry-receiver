@@ -84,8 +84,8 @@ def isolated_run(environ):
 
 ISOLATED_RUN = isolated_run(os.environ)          # a test that REPLACES the registry with a fake sets this False for its own duration
 INSTANCE = os.environ.get("TYPEFERRY_INSTANCE", "")                 # test only: a second, separate receiver (its own mutex, tray window and note) can run beside a real one; empty in every normal run
-MUTEX_NAME = "Local\\PhoneKbReceiver" + INSTANCE
-RUNNING_FILE = os.path.join(tempfile.gettempdir(), "phonekb_running" + INSTANCE + ".txt")          # who holds the receiver's mutex: its data folder, its version and when it started, so a second start can say something true
+MUTEX_NAME = "Local\\TypeferryReceiver" + INSTANCE
+RUNNING_FILE = os.path.join(tempfile.gettempdir(), "typeferry_running" + INSTANCE + ".txt")          # who holds the receiver's mutex: its data folder, its version and when it started, so a second start can say something true
 PAIR_DECIDE_S = 300.0                                         # how long one prompt waits for the person (the phone waits a little longer for it)
 AUTOYES_GO = os.environ.get("TYPEFERRY_AUTOYES_GO") or os.path.join(DATA, "autoyes_go.txt")              # test only: the auto-yes switch types the second number when this file appears (after the test typed the first on the phone)
 PAIR_WINDOW_S = 300.0                                         # how long the pairing window looks for a phone before it gives up
@@ -1272,7 +1272,7 @@ def push_code(code):
     if len(devs) != 1:
         print("Need exactly one phone connected over USB with USB debugging on (found %d)." % len(devs))
         return 1
-    out = adb_run(path, "-s", devs[0], "shell", "am", "broadcast", "-n", "io.github.exalt24.phonekb/.TestReceiver", "-a", "io.github.exalt24.phonekb.TEST", "--es", "token", code)
+    out = adb_run(path, "-s", devs[0], "shell", "am", "broadcast", "-n", "io.github.exalt24.typeferry/.TestReceiver", "-a", "io.github.exalt24.typeferry.TEST", "--es", "token", code)
     print("sent" if "Broadcast completed" in out else out)
     return 0
 
@@ -1777,7 +1777,7 @@ def set_dpi_aware():
 # --- the Windows calls the tray and the dark title bar need, on their own library handles so the typing code's declarations stay as they are ---
 WM_APP = 0x8000
 WM_TRAY, WM_SHOW, WM_QUITREQ, WM_REFRESH = WM_APP + 1, WM_APP + 2, WM_APP + 3, WM_APP + 4
-TRAY_CLASS = "PhoneKbReceiverTray" + INSTANCE
+TRAY_CLASS = "TypeferryReceiverTray" + INSTANCE
 WNDPROC = ctypes.WINFUNCTYPE(ctypes.c_ssize_t, ctypes.c_void_p, ctypes.c_uint, ctypes.c_size_t, ctypes.c_ssize_t)
 
 
@@ -2415,8 +2415,8 @@ def start_companion():
     tray.start()
 
 
-PAIR_MUTEX_NAME = "Local\\PhoneKbPairWindow" + INSTANCE
-PAIR_EVENT_NAME = "Local\\PhoneKbPairWindowWake" + INSTANCE
+PAIR_MUTEX_NAME = "Local\\TypeferryPairWindow" + INSTANCE
+PAIR_EVENT_NAME = "Local\\TypeferryPairWindowWake" + INSTANCE
 _pair_handles = {}
 
 

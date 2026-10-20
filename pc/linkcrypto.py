@@ -1,5 +1,5 @@
 # LIFESPAN: permanent
-"""The fast link's authentication and encryption (protocol v2), shared by the PC receiver and its tests. The Java twin is src/io/github/exalt24/phonekb/LinkCrypto.java; both are checked against the same test vectors.
+"""The fast link's authentication and encryption (protocol v2), shared by the PC receiver and its tests. The Java twin is src/io/github/exalt24/typeferry/LinkCrypto.java; both are checked against the same test vectors.
 
 The pairing code is 16 random characters (about 79 bits) and never crosses the wire. Per connection the PC and the phone swap fresh nonces and each proves it knows the code:
     PC    -> phone: 0x7E | nc(16)
@@ -29,7 +29,7 @@ def pretty(code):
 
 
 def derive_key(code):
-    return hashlib.sha256(("phonekb-v2|" + code).encode("ascii")).digest()
+    return hashlib.sha256(("typeferry-v2|" + code).encode("ascii")).digest()
 
 
 def mac(key, *parts):
@@ -85,7 +85,7 @@ class Session:
 # phone show the second (pair_check), which the person types in the PC window. A listener that merely follows the protocol knows both numbers but has no screen in front of the person, so it cannot be
 # paired by a reflex tap in either direction. The phone sends 'Y' as soon as its person typed the first number right; the PC sends 'Y' once the second was typed right; the phone then stores the code and
 # sends one 'K', and only then does the PC store it. Both sides derive the same 16 character code from the secret and the ordinary link (above) takes over: pairing adds no new way to connect.
-#     PC -> phone: 0x7D | commit(32)             commit = SHA256("phonekb-pair-commit" | pubC | nc)
+#     PC -> phone: 0x7D | commit(32)             commit = SHA256("typeferry-pair-commit" | pubC | nc)
 #     phone -> PC: pubS(256) | ns(16)
 #     PC -> phone: pubC(256) | nc(16)            the phone checks it against the commit
 #     each way:    'Y' or 'N' | HMAC(kz, "confirm-phone"/"confirm-pc" | transcript)      the phone's once its person typed the first number, the PC's once its person typed the second
@@ -115,7 +115,7 @@ def valid_pub(pub):
 
 
 def pair_commit(pub_c_bytes, nc):
-    return hashlib.sha256(b"phonekb-pair-commit" + pub_c_bytes + nc).digest()
+    return hashlib.sha256(b"typeferry-pair-commit" + pub_c_bytes + nc).digest()
 
 
 def pair_secret(priv, other_pub):
