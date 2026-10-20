@@ -50,7 +50,9 @@ In the Philippines, scan this with GCash, Maya or any bank app:
 
 <img src="docs/maribank-qr.png" alt="MariBank QR Ph code for tips, in the name of Daniel Alexis Cruz" width="280">
 
-From abroad, send it with [Wise](https://wise.com/pay/me/danielalexisc6) (you need a Wise account).
+Anywhere else, tip on [Ko-fi](https://ko-fi.com/exaltic) or scan this:
+
+<img src="docs/kofi-qr.png" alt="QR code that opens ko-fi.com/exaltic" width="180">
 
 ## License
 
