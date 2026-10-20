@@ -24,7 +24,7 @@ how long since the last signal, whether Windows is refusing input or Filter Keys
 window hides it to the tray; Quit ends the link loop, which lifts every key and button (the same release path as a dropped link), and removes the tray icon. final_cleanup runs once however the program ends. The windows share one dark theme
 (Theme) that matches the phone app. All of this is the person-facing layer: the protocol, the security and the input code above and below it are untouched.
 
-Run: pythonw phone_kb_receiver.pyw (headless, in Windows Startup). `--pair` opens the pairing window (a number to type on the phone, then the number the phone shows to type here; the code itself sits behind a button). `--push-code` sends the code to a USB-connected phone (run with python.exe). Log: receiver.log. Test switches: PHONEKB_UI_SCALE (draw the windows at a fixed scale, such as 1.5), PHONEKB_TEST_AUTOYES (see autoyes_enabled).
+Run: pythonw typeferry_receiver.pyw (headless, in Windows Startup). `--pair` opens the pairing window (a number to type on the phone, then the number the phone shows to type here; the code itself sits behind a button). `--push-code` sends the code to a USB-connected phone (run with python.exe). Log: receiver.log. Test switches: TYPEFERRY_UI_SCALE (draw the windows at a fixed scale, such as 1.5), TYPEFERRY_TEST_AUTOYES (see autoyes_enabled).
 """
 import atexit
 import base64
@@ -63,12 +63,12 @@ if not FROZEN:
 import linkcrypto as LC  # noqa: E402
 
 # The packaged program unpacks itself to a temporary folder, so its code, log and pairing state live in a permanent per-user folder instead (the script keeps them beside itself).
-DATA = os.environ.get("PHONEKB_DATA") or (os.path.join(os.environ.get("LOCALAPPDATA", HERE), "Typeferry") if FROZEN else HERE)          # PHONEKB_DATA: a test points a receiver at a throw-away folder
+DATA = os.environ.get("TYPEFERRY_DATA") or (os.path.join(os.environ.get("LOCALAPPDATA", HERE), "Typeferry") if FROZEN else HERE)          # TYPEFERRY_DATA: a test points a receiver at a throw-away folder
 try:
     os.makedirs(DATA, exist_ok=True)
 except OSError:
     DATA = HERE
-PORT = int(os.environ.get("PHONEKB_PORT", "8777"))
+PORT = int(os.environ.get("TYPEFERRY_PORT", "8777"))
 CODE_FILE = os.path.join(DATA, "token.txt")
 LAST_FILE = os.path.join(DATA, "last_phone.txt")
 AUTOSTART_OFF_FILE = os.path.join(DATA, "no_autostart.txt")          # present when the person removed the start with Windows entry: the receiver never puts it back on its own
@@ -79,15 +79,15 @@ DUPLICATE_START_S = 90.0
 RECEIVER_VERSION = "5.5"                                          # the app version this receiver belongs to (test_receiver_maps checks it against version.txt, build_receiver_exe.ps1 refuses a mismatch)
 def isolated_run(environ):
     """True for a test or a second instance: it has its own data folder or its own instance name."""
-    return bool(environ.get("PHONEKB_DATA") or environ.get("PHONEKB_INSTANCE"))
+    return bool(environ.get("TYPEFERRY_DATA") or environ.get("TYPEFERRY_INSTANCE"))
 
 
 ISOLATED_RUN = isolated_run(os.environ)          # a test that REPLACES the registry with a fake sets this False for its own duration
-INSTANCE = os.environ.get("PHONEKB_INSTANCE", "")                 # test only: a second, separate receiver (its own mutex, tray window and note) can run beside a real one; empty in every normal run
+INSTANCE = os.environ.get("TYPEFERRY_INSTANCE", "")                 # test only: a second, separate receiver (its own mutex, tray window and note) can run beside a real one; empty in every normal run
 MUTEX_NAME = "Local\\PhoneKbReceiver" + INSTANCE
 RUNNING_FILE = os.path.join(tempfile.gettempdir(), "phonekb_running" + INSTANCE + ".txt")          # who holds the receiver's mutex: its data folder, its version and when it started, so a second start can say something true
 PAIR_DECIDE_S = 300.0                                         # how long one prompt waits for the person (the phone waits a little longer for it)
-AUTOYES_GO = os.environ.get("PHONEKB_AUTOYES_GO") or os.path.join(DATA, "autoyes_go.txt")              # test only: the auto-yes switch types the second number when this file appears (after the test typed the first on the phone)
+AUTOYES_GO = os.environ.get("TYPEFERRY_AUTOYES_GO") or os.path.join(DATA, "autoyes_go.txt")              # test only: the auto-yes switch types the second number when this file appears (after the test typed the first on the phone)
 PAIR_WINDOW_S = 300.0                                         # how long the pairing window looks for a phone before it gives up
 QUIET_S = 5.0                                                 # no VALID frame (a heartbeat comes every second) for this long, by the monotonic clock: the phone is gone, release every key
 HANDSHAKE_S = 3.0             # one deadline for a whole link handshake: a host that answers a byte at a time cannot hold the search (each recv has its own timeout, so only a total stops a drip)
@@ -816,7 +816,7 @@ def read_last():
         return ""
 
 
-NO_ADB = os.environ.get("PHONEKB_NO_ADB", "").strip().lower() in ("1", "true", "yes")          # test switch: never use the adb forward, so the network paths can be exercised while a cable is plugged in ("0" or "false" leaves it off)
+NO_ADB = os.environ.get("TYPEFERRY_NO_ADB", "").strip().lower() in ("1", "true", "yes")          # test switch: never use the adb forward, so the network paths can be exercised while a cable is plugged in ("0" or "false" leaves it off)
 KNOWN_FILE = os.path.join(DATA, "known_phones.txt")
 KIND_NAMES = {1: "USB cable", 2: "Wi-Fi", 3: "phone hotspot"}
 MAX_KNOWN = 8
@@ -1320,10 +1320,10 @@ def ensure_autostart():
 
 
 def autoyes_enabled(environ=None, frozen=None):
-    """The test switch that types the second number for the person: only unfrozen, only for 1, true or yes, and only when a test also named the signal file it waits for (PHONEKB_AUTOYES_GO), so a stray variable in a normal run does nothing."""
+    """The test switch that types the second number for the person: only unfrozen, only for 1, true or yes, and only when a test also named the signal file it waits for (TYPEFERRY_AUTOYES_GO), so a stray variable in a normal run does nothing."""
     environ = os.environ if environ is None else environ
     frozen = getattr(sys, "frozen", False) if frozen is None else frozen
-    return environ.get("PHONEKB_TEST_AUTOYES", "").strip().lower() in ("1", "true", "yes") and bool(environ.get("PHONEKB_AUTOYES_GO")) and not frozen
+    return environ.get("TYPEFERRY_TEST_AUTOYES", "").strip().lower() in ("1", "true", "yes") and bool(environ.get("TYPEFERRY_AUTOYES_GO")) and not frozen
 
 
 def startup_registered():
@@ -2111,7 +2111,7 @@ class Theme:
     def __init__(self, root):
         self.root = root
         try:
-            forced = float(os.environ.get("PHONEKB_UI_SCALE", "") or 0)
+            forced = float(os.environ.get("TYPEFERRY_UI_SCALE", "") or 0)
         except ValueError:
             forced = 0.0
         detected = max(1.0, root.winfo_fpixels("1i") / 96.0)
