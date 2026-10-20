@@ -44,7 +44,13 @@ The Typeferry app and this program collect nothing and send nothing to anyone bu
 
 ## Tips
 
-Typeferry is free. If it helps you, you can send a tip with [Wise](https://wise.com/pay/me/danielalexisc6) (you need a Wise account).
+Typeferry is free. If it helps you, you can send a tip.
+
+In the Philippines, scan this with GCash, Maya or any bank app:
+
+<img src="docs/maribank-qr.png" alt="MariBank QR Ph code for tips, in the name of Daniel Alexis Cruz" width="280">
+
+From abroad, send it with [Wise](https://wise.com/pay/me/danielalexisc6) (you need a Wise account).
 
 ## License
 
