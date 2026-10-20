@@ -27,10 +27,10 @@ The phone listens on port 8777 and this program connects out to it, so Windows F
 ## Run from source
 
 ```powershell
-python pc\phone_kb_receiver.pyw
+python pc\typeferry_receiver.pyw
 ```
 
-The source is `pc/phone_kb_receiver.pyw` plus `pc/linkcrypto.py`, which uses only the Python standard library. `--pair` opens the pairing window and `--uninstall` removes the start with Windows entry.
+The source is `pc/typeferry_receiver.pyw` plus `pc/linkcrypto.py`, which uses only the Python standard library. `--pair` opens the pairing window and `--uninstall` removes the start with Windows entry.
 
 ## Limits
 
