@@ -42,7 +42,7 @@ The source is `pc/phone_kb_receiver.pyw` plus `pc/linkcrypto.py`, which uses onl
 
 The Typeferry app and this program collect nothing and send nothing to anyone but your own PC. The full text is the [privacy policy](https://exalt24.github.io/typeferry-receiver/privacy.html).
 
-## Support
+## Tips
 
 Typeferry is free. If it helps you, you can send a tip with [Wise](https://wise.com/pay/me/danielalexisc6) (you need a Wise account).
 
